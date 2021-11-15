@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -100,7 +99,10 @@ namespace task_1
             if (!wordInDictionary)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("You word doesn't exist in file, try to put another word");
+                if (String.IsNullOrEmpty(wordToFind))
+                    Console.WriteLine("You put empty line, please put word");
+                else
+                    Console.WriteLine("You word doesn't exist in file, try to put another word");
                 Console.ResetColor();
             }
         }
