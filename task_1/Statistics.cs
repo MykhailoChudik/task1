@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace task_1
@@ -12,6 +13,7 @@ namespace task_1
         private string[] words;
         private List<string> fileList = new List<string>();
         private Dictionary<string, WordInfo> myDictionary = new Dictionary<string, WordInfo>();
+        private StringComparer comparer = StringComparer.OrdinalIgnoreCase;
 
         public Statistics(string file)
         {
@@ -38,9 +40,8 @@ namespace task_1
                 str += " " + fileLine;
             }
             words = str.ToLower().Split(separators, StringSplitOptions.RemoveEmptyEntries);
-            words = RemoveDuplicates(words);
-
-            foreach (var word in words)
+            var distinctWord = words.Distinct();
+            foreach (var word in distinctWord)
             {
                 myDictionary.Add(word, new WordInfo());
             }
@@ -51,12 +52,12 @@ namespace task_1
         {
             for (var i = 0; i < fileList.Count; i++)
             {
-                var wordLine = fileList[i].ToLower().Split(separators, StringSplitOptions.RemoveEmptyEntries);
+                var wordLine = fileList[i].Split(separators, StringSplitOptions.RemoveEmptyEntries);
                 for (var j = 0; j < wordLine.Length; j++)
                 {
                     foreach (var word in myDictionary)
                     {
-                        if (word.Key.Equals(wordLine[j]))
+                        if (comparer.Equals(word.Key, wordLine[j]))
                         {
                             word.Value.setLine(i + 1);
                             word.Value.setPos(j + 1);
@@ -64,14 +65,6 @@ namespace task_1
                     }
                 }
             }
-        }
-
-        private static string[] RemoveDuplicates(string[] s)
-        {
-            var set = new HashSet<string>(s);
-            var result = new string[set.Count];
-            set.CopyTo(result);
-            return result;
         }
 
         public void PrintDictionary()
@@ -83,15 +76,13 @@ namespace task_1
             }
         }
 
-        public void WordInform(string str)
+        public void WordInform(string wordToFind)
         {
             var wordInDictionary = false;
 
             foreach (var wordInfo in myDictionary)
             {
-                var lower1 = wordInfo.Key.ToLower();
-                var lower2 = str.ToLower();
-                if (lower1.Equals(lower2))
+                if (comparer.Equals(wordInfo.Key, wordToFind))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("You word exists in:");
