@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace task_1
 {
     class Statistics
     {
         public bool error { get; private set;}
-        private char[] separators = new[] { ' ', ',', '.', '!', '?', '\r', '\n' };
         private string str;
         private string[] words;
         private List<string> fileList = new List<string>();
@@ -21,7 +21,7 @@ namespace task_1
             {
                 foreach (var lines in System.IO.File.ReadLines(file))
                 {
-                    fileList.Add(lines);
+                    fileList.Add(Regex.Replace(lines, "[^\\w]", " "));
                 }
                 CreateDictionary();
                 error = false;
@@ -39,7 +39,7 @@ namespace task_1
             {
                 str += " " + fileLine;
             }
-            words = str.ToLower().Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            words = str.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var distinctWord = words.Distinct();
             foreach (var word in distinctWord)
             {
@@ -52,7 +52,7 @@ namespace task_1
         {
             for (var i = 0; i < fileList.Count; i++)
             {
-                var wordLine = fileList[i].Split(separators, StringSplitOptions.RemoveEmptyEntries);
+                var wordLine = fileList[i].Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 for (var j = 0; j < wordLine.Length; j++)
                 {
                     foreach (var word in myDictionary)
